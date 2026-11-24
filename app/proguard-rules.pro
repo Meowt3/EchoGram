@@ -1,0 +1,5 @@
+-keep class org.drinkless.tdlib.** { *; }
+-keepclassmembers class org.drinkless.tdlib.** { *; }
+-keep class com.echogram.app.data.model.** { *; }
+-dontwarn org.drinkless.tdlib.**
+-dontwarn com.google.zxing.**
