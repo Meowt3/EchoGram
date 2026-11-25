@@ -67,7 +67,6 @@ import com.tgaudiobooks.app.data.model.TelegramAuthState
 import com.tgaudiobooks.app.data.model.TelegramConnectionStatus
 import com.tgaudiobooks.app.data.model.TelegramProxyItem
 import com.tgaudiobooks.app.data.model.TelegramProxyType
-import com.tgaudiobooks.app.ui.components.AmbientBubbleLayer
 import com.tgaudiobooks.app.ui.components.BubbleMotion
 import com.tgaudiobooks.app.ui.components.QrCodeGenerator
 import com.tgaudiobooks.app.ui.theme.AppIconPreset
@@ -121,11 +120,6 @@ fun TelegramAuthScreen(
         color = MaterialTheme.colorScheme.background
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            AmbientBubbleLayer(
-                modifier = Modifier.fillMaxSize(),
-                active = true,
-                intensity = 0.45f
-            )
             Column(
             modifier = Modifier
                 .fillMaxSize()

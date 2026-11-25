@@ -19,8 +19,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.ui.graphics.graphicsLayer
-import com.tgaudiobooks.app.ui.components.AmbientBubbleLayer
 import com.tgaudiobooks.app.ui.components.BubbleMotion
+import com.tgaudiobooks.app.ui.components.BubbleNavItem
+import com.tgaudiobooks.app.ui.components.FloatingBubbleNavBar
+import kotlin.math.abs
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -352,11 +354,6 @@ fun EchoGramApp(
             return@EchoGramTheme
         }
         Box(modifier = Modifier.fillMaxSize()) {
-            AmbientBubbleLayer(
-                modifier = Modifier.fillMaxSize(),
-                active = !isFullPlayerOpen && !showSettings,
-                intensity = 0.28f
-            )
             Scaffold(
                 snackbarHost = {
                     SnackbarHost(hostState = snackbarHostState) { data ->
@@ -419,76 +416,68 @@ fun EchoGramApp(
                                 )
                             }
                         }
-                        androidx.compose.material3.HorizontalDivider(
-                            thickness = 0.5.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.30f)
-                        )
-                        NavigationBar(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                        ) {
-                            tabs.forEachIndexed { index, tab ->
-                                NavigationBarItem(
-                                    selected = pagerState.currentPage == index,
-                                    onClick = {
-                                        if (pagerState.currentPage == index) {
-                                            when (tab) {
-                                                AppTab.HOME -> openedMixId = null
-                                                AppTab.CATEGORIES -> {
-                                                    openedCategoryId = null
-                                                    openedCategoryTitle = null
-                                                }
-                                                AppTab.LIBRARY -> {
-                                                    openedLibraryChannelId = null
-                                                    openedPlaylistId = null
-                                                    activeLibrarySection = null
-                                                }
-                                                AppTab.SEARCH -> Unit
-                                            }
-                                        } else {
-                                            scope.launch { pagerState.animateScrollToPage(index) }
-                                        }
-                                    },
-                                    icon = {
-                                        val navScale by animateFloatAsState(
-                                            targetValue = if (pagerState.currentPage == index) 1.16f else 1.0f,
-                                            animationSpec = BubbleMotion.bouncySpring(),
-                                            label = "nav_bubble_scale"
-                                        )
-                                        Icon(
-                                            when (tab) {
-                                                AppTab.HOME -> Icons.Default.Home
-                                                AppTab.CATEGORIES -> Icons.Default.Category
-                                                AppTab.SEARCH -> Icons.Default.Search
-                                                AppTab.LIBRARY -> Icons.Default.LibraryMusic
-                                            },
-                                            contentDescription = tab.title,
-                                            modifier = Modifier.graphicsLayer {
-                                                scaleX = navScale
-                                                scaleY = navScale
-                                            }
-                                        )
-                                    },
-                                    label = {
-                                        Text(
-                                            text = tab.title,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
+                        val navItems = remember(tabs) {
+                            tabs.map { tab ->
+                                BubbleNavItem(
+                                    label = tab.title,
+                                    icon = when (tab) {
+                                        AppTab.HOME -> Icons.Default.Home
+                                        AppTab.CATEGORIES -> Icons.Default.Category
+                                        AppTab.SEARCH -> Icons.Default.Search
+                                        AppTab.LIBRARY -> Icons.Default.LibraryMusic
                                     }
                                 )
                             }
                         }
+                        FloatingBubbleNavBar(
+                            items = navItems,
+                            selectedIndex = pagerState.currentPage,
+                            pagerPosition = pagerState.currentPage + pagerState.currentPageOffsetFraction,
+                            onSelect = { index ->
+                                val tab = tabs[index]
+                                if (pagerState.currentPage == index) {
+                                    when (tab) {
+                                        AppTab.HOME -> openedMixId = null
+                                        AppTab.CATEGORIES -> {
+                                            openedCategoryId = null
+                                            openedCategoryTitle = null
+                                        }
+                                        AppTab.LIBRARY -> {
+                                            openedLibraryChannelId = null
+                                            openedPlaylistId = null
+                                            activeLibrarySection = null
+                                        }
+                                        AppTab.SEARCH -> Unit
+                                    }
+                                } else {
+                                    scope.launch { pagerState.animateScrollToPage(index) }
+                                }
+                            }
+                        )
                     }
                 }
             ) { innerPadding ->
                 HorizontalPager(
                     state = pagerState,
+                    beyondViewportPageCount = 1,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
                         .consumeWindowInsets(innerPadding)
                         .imePadding()
                 ) { page ->
+                    val pageOffset = abs((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).coerceIn(0f, 1f)
+                    val pageScale = 1f - (pageOffset * 0.055f)
+                    val pageAlpha = 1f - (pageOffset * 0.30f)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer {
+                                scaleX = pageScale
+                                scaleY = pageScale
+                                alpha = pageAlpha
+                            }
+                    ) {
                     when (tabs[page]) {
                         AppTab.HOME -> HomeScreen(
                             isTelegramConnected = authState is TelegramAuthState.Connected,
@@ -619,6 +608,7 @@ fun EchoGramApp(
                             },
                             onOpenSettings = { showSettings = true }
                         )
+                    }
                     }
                 }
             }

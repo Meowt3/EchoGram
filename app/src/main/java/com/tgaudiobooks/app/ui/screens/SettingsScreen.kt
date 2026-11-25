@@ -107,6 +107,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.ui.graphics.graphicsLayer
 import com.tgaudiobooks.app.ui.components.AnimatedProgressBarCanvas
 import com.tgaudiobooks.app.ui.components.BubbleMotion
+import com.tgaudiobooks.app.ui.components.BubbleNavItem
+import com.tgaudiobooks.app.ui.components.SlidingBubbleTabBar
 import com.tgaudiobooks.app.ui.theme.AppIconPreset
 import com.tgaudiobooks.app.ui.theme.EchoGramBrandIcon
 import java.text.SimpleDateFormat
@@ -288,60 +290,14 @@ fun SettingsScreen(
                 )
             }
 
-            Surface(
-                shape = RoundedCornerShape(18.dp),
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.padding(4.dp)
-                ) {
-                    SettingsTab.entries.forEach { tab ->
-                        val active = activeTab == tab
-                        val bg by animateColorAsState(
-                            targetValue = if (active) MaterialTheme.colorScheme.primary else Color.Transparent,
-                            animationSpec = tween(180),
-                            label = "settings_tab_bg"
-                        )
-                        val fg by animateColorAsState(
-                            targetValue = if (active) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                            animationSpec = tween(180),
-                            label = "settings_tab_fg"
-                        )
-                        val tabScale by animateFloatAsState(
-                            targetValue = if (active) 1.04f else 0.98f,
-                            animationSpec = BubbleMotion.bouncySpring(),
-                            label = "settings_tab_scale"
-                        )
-                        Surface(
-                            shape = RoundedCornerShape(14.dp),
-                            color = bg,
-                            contentColor = fg,
-                            modifier = Modifier
-                                .weight(1f)
-                                .graphicsLayer { scaleX = tabScale; scaleY = tabScale }
-                                .clip(RoundedCornerShape(14.dp))
-                                .clickable { activeTab = tab }
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(3.dp),
-                                modifier = Modifier.padding(vertical = 8.dp, horizontal = 2.dp)
-                            ) {
-                                Icon(tab.icon, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Text(
-                                    text = tab.label,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.SemiBold,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                        }
-                    }
-                }
+            val settingsNavItems = remember {
+                SettingsTab.entries.map { BubbleNavItem(label = it.label, icon = it.icon) }
             }
+            SlidingBubbleTabBar(
+                items = settingsNavItems,
+                selectedIndex = SettingsTab.entries.indexOf(activeTab),
+                onSelect = { idx -> activeTab = SettingsTab.entries[idx] }
+            )
         }
 
         AnimatedContent(

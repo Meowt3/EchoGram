@@ -574,15 +574,15 @@ fun MiniPlayerBar(
     val latestOnPrevious by rememberUpdatedState(onPrevious)
 
     Surface(
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(28.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.36f)),
-        shadowElevation = 6.dp,
-        tonalElevation = 4.dp,
+        shadowElevation = 8.dp,
+        tonalElevation = 5.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 6.dp)
-            .clip(RoundedCornerShape(20.dp))
+            .padding(horizontal = 14.dp, vertical = 4.dp)
+            .clip(RoundedCornerShape(28.dp))
             .clickable(onClick = onExpand)
             .pointerInput(Unit) {
                 var dragDx = 0f
@@ -910,11 +910,6 @@ fun FullScreenPlayerModal(
                 .fillMaxSize()
                 .background(bgBrush)
         ) {
-            AmbientBubbleLayer(
-                modifier = Modifier.fillMaxSize(),
-                active = isPlaying,
-                intensity = 0.55f
-            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()
