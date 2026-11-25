@@ -42,7 +42,7 @@ jobs:
             -keypass echogram_release_store \
             -dname "CN=EchoGram, OU=Android, O=Meowt3, C=RU"
 
-      - name: Build Release & Debug APKs
+      - name: Build Multi-ABI Release APKs
         env:
           TG_API_ID: ${{ secrets.TG_API_ID }}
           TG_API_HASH: ${{ secrets.TG_API_HASH }}
@@ -51,19 +51,24 @@ jobs:
           RELEASE_KEY_ALIAS: echogram
           RELEASE_KEY_PASSWORD: echogram_release_store
         run: |
-          gradle assembleRelease assembleDebug --no-daemon --stacktrace
+          gradle assembleRelease --no-daemon --stacktrace
 
-      - name: Rename APKs
+      - name: Package Multi-ABI APKs
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/release/app-release.apk dist/EchoGram-v2.1.0-release.apk
-          cp app/build/outputs/apk/debug/app-debug.apk dist/EchoGram-v2.1.0-debug.apk
+          VERSION="v2.1.1"
+          for abi in arm64-v8a armeabi-v7a x86_64 universal; do
+            SRC="app/build/outputs/apk/release/app-${abi}-release.apk"
+            if [ -f "$SRC" ]; then
+              cp "$SRC" "dist/EchoGram-${VERSION}-${abi}-release.apk"
+            fi
+          done
           ls -lh dist/
 
-      - name: Upload APK Artifacts
+      - name: Upload Multi-ABI APK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: EchoGram-APKs
+          name: EchoGram-MultiABI-APKs
           path: dist/*.apk
           if-no-files-found: error
 
@@ -71,7 +76,5 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            dist/EchoGram-v2.1.0-release.apk
-            dist/EchoGram-v2.1.0-debug.apk
+          files: dist/*.apk
           generate_release_notes: true

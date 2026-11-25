@@ -32,10 +32,12 @@
 
 Скачайте последний подписанный APK в разделе [GitHub Releases](https://github.com/Meowt3/EchoGram/releases/latest):
 
-| Сборка | Описание | Скачать |
+| Архитектура | Файл | Для каких устройств |
 | --- | --- | --- |
-| **Release APK** *(Рекомендуется)* | Подписанная релизная сборка с оптимизацией R8 | [`EchoGram-v2.1.0-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.0-release.apk) |
-| **Debug APK** | Отладочная сборка для тестирования и диагностики | [`EchoGram-v2.1.0-debug.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.0-debug.apk) |
+| **`arm64-v8a`** *(Рекомендуется)* | [`EchoGram-v2.1.1-arm64-v8a-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.1-arm64-v8a-release.apk) | Современные 64-битные смартфоны (минимальный размер) |
+| **`armeabi-v7a`** | [`EchoGram-v2.1.1-armeabi-v7a-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.1-armeabi-v7a-release.apk) | Старые 32-битные смартфоны и Android TV приставки |
+| **`x86_64`** | [`EchoGram-v2.1.1-x86_64-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.1-x86_64-release.apk) | Эмуляторы, Chromebook, WSA и планшеты на x86_64 |
+| **Universal** | [`EchoGram-v2.1.1-universal-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.1-universal-release.apk) | Любой Android 8.0+ (если не уверены в архитектуре) |
 
 ### Быстрый старт
 

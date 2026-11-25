@@ -27,11 +27,20 @@ android {
         applicationId = "com.tgaudiobooks.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 210
-        versionName = "2.1.0"
+        versionCode = 211
+        versionName = "2.1.1"
 
         buildConfigField("int", "TG_API_ID", tgApiId.toString())
         buildConfigField("String", "TG_API_HASH", "\"$tgApiHash\"")
+    }
+
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a", "x86_64")
+            isUniversalApk = true
+        }
     }
 
     signingConfigs {
