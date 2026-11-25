@@ -46,6 +46,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -148,7 +149,7 @@ object BubbleMotion {
 fun Modifier.bubblePressEffect(
     interactionSource: MutableInteractionSource,
     pressedScale: Float = 0.93f
-): Modifier = androidx.compose.ui.composed {
+): Modifier = composed {
     val pressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
         targetValue = if (pressed) pressedScale else 1f,
