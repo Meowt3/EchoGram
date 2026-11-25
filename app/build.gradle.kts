@@ -20,15 +20,15 @@ val tgApiHash: String = (System.getenv("TG_API_HASH")
     ?: "").trim().replace("\"", "\\\"")
 
 android {
-    namespace = "com.echogram.app"
+    namespace = "com.tgaudiobooks.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.echogram.app"
+        applicationId = "com.tgaudiobooks.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 200
-        versionName = "2.0.0"
+        versionCode = 210
+        versionName = "2.1.0"
 
         buildConfigField("int", "TG_API_ID", tgApiId.toString())
         buildConfigField("String", "TG_API_HASH", "\"$tgApiHash\"")
@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.palette.ktx)
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.androidx.media3.exoplayer)

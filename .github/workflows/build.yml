@@ -30,7 +30,7 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Generate release keystore (ephemeral if not provided)
+      - name: Generate release keystore
         run: |
           keytool -genkeypair -v \
             -keystore release.keystore \
@@ -56,11 +56,11 @@ jobs:
       - name: Rename APKs
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/release/app-release.apk dist/EchoGram-v2.0.0-release.apk
-          cp app/build/outputs/apk/debug/app-debug.apk dist/EchoGram-v2.0.0-debug.apk
+          cp app/build/outputs/apk/release/app-release.apk dist/EchoGram-v2.1.0-release.apk
+          cp app/build/outputs/apk/debug/app-debug.apk dist/EchoGram-v2.1.0-debug.apk
           ls -lh dist/
 
-      - name: Upload Release APK Artifact
+      - name: Upload APK Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: EchoGram-APKs
@@ -72,6 +72,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/EchoGram-v2.0.0-release.apk
-            dist/EchoGram-v2.0.0-debug.apk
+            dist/EchoGram-v2.1.0-release.apk
+            dist/EchoGram-v2.1.0-debug.apk
           generate_release_notes: true
