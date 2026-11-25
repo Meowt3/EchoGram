@@ -1,11 +1,13 @@
 package com.tgaudiobooks.app.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -13,8 +15,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -58,104 +58,124 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
+/**
+ * Silky, critically damped (zero-jitter / zero-bounce) Material 3 Emphasized capsule animations.
+ */
 object BubbleMotion {
 
+    // Material 3 Emphasized Decelerate & Accelerate curves — silky smooth, zero oscillation
+    val EmphasizedDecelerate = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1.0f)
+    val EmphasizedAccelerate = CubicBezierEasing(0.3f, 0.0f, 0.8f, 0.15f)
+    val SmoothStandard = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
+
+    /** Smooth zero-bounce spring for pills, sliders, and icons. */
     fun <T> bouncySpring() = spring<T>(
-        dampingRatio = Spring.DampingRatioMediumBouncy,
-        stiffness = Spring.StiffnessMediumLow
+        dampingRatio = Spring.DampingRatioNoBouncy,
+        stiffness = 380f
     )
 
-    /** Capsule-style bottom-anchored expand transition for FullPlayer & Chat modals. */
+    /** Pure capsule expand from bottom-center pill into full screen (zero jitter). */
     fun modalEnter(): EnterTransition =
-        slideInVertically(
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioLowBouncy,
-                stiffness = Spring.StiffnessMediumLow
-            )
-        ) { it / 2 } +
-            scaleIn(
-                initialScale = 0.84f,
-                transformOrigin = TransformOrigin(0.5f, 1.0f),
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioLowBouncy,
-                    stiffness = Spring.StiffnessMediumLow
-                )
-            ) +
-            fadeIn(tween(220, easing = FastOutSlowInEasing))
+        scaleIn(
+            initialScale = 0.76f,
+            transformOrigin = TransformOrigin(0.5f, 0.92f),
+            animationSpec = tween(durationMillis = 340, easing = EmphasizedDecelerate)
+        ) + fadeIn(animationSpec = tween(durationMillis = 200, easing = SmoothStandard))
 
+    /** Pure capsule collapse back down into bottom-center pill (zero jitter). */
     fun modalExit(): ExitTransition =
-        slideOutVertically(animationSpec = tween(220, easing = FastOutSlowInEasing)) { it / 2 } +
-            scaleOut(
-                targetScale = 0.86f,
-                transformOrigin = TransformOrigin(0.5f, 1.0f),
-                animationSpec = tween(200, easing = FastOutSlowInEasing)
-            ) +
-            fadeOut(tween(170))
+        scaleOut(
+            targetScale = 0.76f,
+            transformOrigin = TransformOrigin(0.5f, 0.92f),
+            animationSpec = tween(durationMillis = 250, easing = EmphasizedAccelerate)
+        ) + fadeOut(animationSpec = tween(durationMillis = 190, easing = EmphasizedAccelerate))
 
-    /** Capsule pop-in for floating MiniPlayerBar above the nav capsule. */
+    /** Smooth capsule expand for MiniPlayerBar appearing above the nav capsule. */
     fun miniBarEnter(): EnterTransition =
-        slideInVertically(
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessMediumLow
-            )
-        ) { it } +
-            scaleIn(
-                initialScale = 0.86f,
-                transformOrigin = TransformOrigin(0.5f, 1.0f),
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessMediumLow
-                )
-            ) +
-            fadeIn(tween(200))
+        scaleIn(
+            initialScale = 0.84f,
+            transformOrigin = TransformOrigin(0.5f, 1.0f),
+            animationSpec = tween(durationMillis = 280, easing = EmphasizedDecelerate)
+        ) + fadeIn(animationSpec = tween(durationMillis = 180))
 
     fun miniBarExit(): ExitTransition =
-        slideOutVertically(animationSpec = tween(180)) { it } +
-            scaleOut(
-                targetScale = 0.88f,
-                transformOrigin = TransformOrigin(0.5f, 1.0f),
-                animationSpec = tween(160)
-            ) +
-            fadeOut(tween(150))
+        scaleOut(
+            targetScale = 0.84f,
+            transformOrigin = TransformOrigin(0.5f, 1.0f),
+            animationSpec = tween(durationMillis = 200, easing = EmphasizedAccelerate)
+        ) + fadeOut(animationSpec = tween(durationMillis = 160))
 
+    /** Capsule-scale content switch for tabs, categories, home & settings (zero jitter). */
     fun bubbleContentTransform(): ContentTransform =
         (scaleIn(
             initialScale = 0.94f,
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessMediumLow
-            )
-        ) + fadeIn(tween(200)))
+            transformOrigin = TransformOrigin.Center,
+            animationSpec = tween(durationMillis = 260, easing = EmphasizedDecelerate)
+        ) + fadeIn(tween(durationMillis = 200, easing = SmoothStandard)))
             .togetherWith(
-                scaleOut(targetScale = 0.96f, animationSpec = tween(140)) +
-                    fadeOut(tween(130))
+                scaleOut(
+                    targetScale = 0.96f,
+                    transformOrigin = TransformOrigin.Center,
+                    animationSpec = tween(durationMillis = 170, easing = EmphasizedAccelerate)
+                ) + fadeOut(tween(durationMillis = 150))
             )
 
+    /** Crisp smooth icon morph without bounce wobble. */
     fun iconPopTransform(): ContentTransform =
         (scaleIn(
-            initialScale = 0.60f,
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessMedium
-            )
-        ) + fadeIn(tween(150)))
+            initialScale = 0.78f,
+            animationSpec = tween(durationMillis = 200, easing = EmphasizedDecelerate)
+        ) + fadeIn(tween(durationMillis = 150)))
             .togetherWith(
-                scaleOut(targetScale = 0.65f, animationSpec = tween(110)) +
-                    fadeOut(tween(110))
+                scaleOut(
+                    targetScale = 0.78f,
+                    animationSpec = tween(durationMillis = 140, easing = EmphasizedAccelerate)
+                ) + fadeOut(tween(durationMillis = 120))
             )
+}
+
+/**
+ * Wraps a modal overlay (FullScreenPlayer / TelegramChat) in a smooth capsule expand/collapse
+ * that morphs corner radius (34.dp <-> 0.dp) along with scale and fade — zero jitter.
+ */
+@Composable
+fun CapsuleModalOverlay(
+    visible: Boolean,
+    content: @Composable () -> Unit
+) {
+    val cornerDp by animateDpAsState(
+        targetValue = if (visible) 0.dp else 36.dp,
+        animationSpec = tween(
+            durationMillis = if (visible) 340 else 250,
+            easing = if (visible) BubbleMotion.EmphasizedDecelerate else BubbleMotion.EmphasizedAccelerate
+        ),
+        label = "capsule_modal_corner"
+    )
+    AnimatedVisibility(
+        visible = visible,
+        enter = BubbleMotion.modalEnter(),
+        exit = BubbleMotion.modalExit()
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(cornerDp))
+        ) {
+            content()
+        }
+    }
 }
 
 fun Modifier.bubblePressEffect(
     interactionSource: MutableInteractionSource,
-    pressedScale: Float = 0.93f
+    pressedScale: Float = 0.94f
 ): Modifier = composed {
     val pressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
         targetValue = if (pressed) pressedScale else 1f,
         animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMedium
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = 460f
         ),
         label = "bubble_press_scale"
     )
@@ -171,8 +191,8 @@ data class BubbleNavItem(
 )
 
 /**
- * Floating capsule bottom navigation bar with a live sliding & stretching bubble indicator
- * synced directly to HorizontalPager's continuous [pagerPosition] (currentPage + offsetFraction).
+ * Floating capsule bottom navigation bar with a silky sliding pill indicator
+ * synced directly to HorizontalPager's continuous [pagerPosition] (zero jitter).
  */
 @Composable
 fun FloatingBubbleNavBar(
@@ -184,9 +204,8 @@ fun FloatingBubbleNavBar(
 ) {
     if (items.isEmpty()) return
     val clampedPos = pagerPosition.coerceIn(0f, (items.size - 1).toFloat())
-    // Stretch the sliding bubble slightly mid-swipe for a liquid-pill feel
     val fractional = abs(clampedPos - clampedPos.roundToInt())
-    val stretchX = 1f + (fractional * 0.24f)
+    val stretchX = 1f + (fractional * 0.16f)
 
     Box(
         modifier = modifier
@@ -212,7 +231,6 @@ fun FloatingBubbleNavBar(
                 val count = items.size
                 val slotWidth = maxWidth / count
 
-                // Sliding liquid bubble indicator
                 Box(
                     modifier = Modifier
                         .width(slotWidth)
@@ -225,7 +243,7 @@ fun FloatingBubbleNavBar(
                         }
                         .graphicsLayer {
                             scaleX = stretchX
-                            scaleY = 1f - (fractional * 0.08f)
+                            scaleY = 1f - (fractional * 0.05f)
                         }
                         .clip(RoundedCornerShape(24.dp))
                         .background(MaterialTheme.colorScheme.primaryContainer)
@@ -238,11 +256,11 @@ fun FloatingBubbleNavBar(
                         val contentColor by animateColorAsState(
                             targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
                             else MaterialTheme.colorScheme.onSurfaceVariant,
-                            animationSpec = tween(180),
+                            animationSpec = tween(200, easing = BubbleMotion.SmoothStandard),
                             label = "nav_item_color"
                         )
                         val iconScale by animateFloatAsState(
-                            targetValue = if (isSelected) 1.12f else 0.96f,
+                            targetValue = if (isSelected) 1.08f else 0.98f,
                             animationSpec = BubbleMotion.bouncySpring(),
                             label = "nav_item_icon_scale"
                         )
@@ -253,7 +271,7 @@ fun FloatingBubbleNavBar(
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
-                                .bubblePressEffect(interaction, 0.92f)
+                                .bubblePressEffect(interaction, 0.94f)
                                 .clip(RoundedCornerShape(24.dp))
                                 .clickable(
                                     interactionSource = interaction,
@@ -290,7 +308,7 @@ fun FloatingBubbleNavBar(
 }
 
 /**
- * Reusable capsule tab bar with a springy sliding bubble slider underneath the active tab.
+ * Silky capsule tab bar with a zero-jitter sliding pill underneath the active tab.
  */
 @Composable
 fun SlidingBubbleTabBar(
@@ -302,13 +320,10 @@ fun SlidingBubbleTabBar(
     if (items.isEmpty()) return
     val animatedIndex by animateFloatAsState(
         targetValue = selectedIndex.toFloat(),
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMediumLow
-        ),
+        animationSpec = tween(durationMillis = 280, easing = BubbleMotion.EmphasizedDecelerate),
         label = "sliding_tab_pos"
     )
-    val velocityStretch = abs(animatedIndex - selectedIndex).coerceAtMost(0.6f)
+    val velocityStretch = abs(animatedIndex - selectedIndex).coerceAtMost(0.45f)
 
     Surface(
         shape = RoundedCornerShape(22.dp),
@@ -325,7 +340,6 @@ fun SlidingBubbleTabBar(
         ) {
             val slotWidth = maxWidth / items.size
 
-            // Sliding bubble pill
             Box(
                 modifier = Modifier
                     .width(slotWidth)
@@ -337,8 +351,8 @@ fun SlidingBubbleTabBar(
                         )
                     }
                     .graphicsLayer {
-                        scaleX = 1f + velocityStretch * 0.22f
-                        scaleY = 1f - velocityStretch * 0.06f
+                        scaleX = 1f + velocityStretch * 0.16f
+                        scaleY = 1f - velocityStretch * 0.04f
                     }
                     .clip(RoundedCornerShape(18.dp))
                     .background(MaterialTheme.colorScheme.primary)
@@ -350,7 +364,7 @@ fun SlidingBubbleTabBar(
                     val fg by animateColorAsState(
                         targetValue = if (active) MaterialTheme.colorScheme.onPrimary
                         else MaterialTheme.colorScheme.onSurfaceVariant,
-                        animationSpec = tween(180),
+                        animationSpec = tween(200, easing = BubbleMotion.SmoothStandard),
                         label = "sliding_tab_fg"
                     )
                     val interaction = remember { MutableInteractionSource() }
@@ -360,7 +374,7 @@ fun SlidingBubbleTabBar(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
-                            .bubblePressEffect(interaction, 0.93f)
+                            .bubblePressEffect(interaction, 0.94f)
                             .clip(RoundedCornerShape(18.dp))
                             .clickable(
                                 interactionSource = interaction,

@@ -20,6 +20,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.ui.graphics.graphicsLayer
 import com.tgaudiobooks.app.ui.components.BubbleMotion
+import com.tgaudiobooks.app.ui.components.CapsuleModalOverlay
 import com.tgaudiobooks.app.ui.components.BubbleNavItem
 import com.tgaudiobooks.app.ui.components.FloatingBubbleNavBar
 import kotlin.math.abs
@@ -613,10 +614,8 @@ fun EchoGramApp(
                 }
             }
 
-            AnimatedVisibility(
-                visible = isFullPlayerOpen && currentTrack != null,
-                enter = BubbleMotion.modalEnter(),
-                exit = BubbleMotion.modalExit()
+            CapsuleModalOverlay(
+                visible = isFullPlayerOpen && currentTrack != null
             ) {
                 currentTrack?.let { activeTrack ->
                     FullScreenPlayerModal(
@@ -691,10 +690,8 @@ fun EchoGramApp(
                 }
             }
 
-            AnimatedVisibility(
-                visible = chatUiState.target != null,
-                enter = BubbleMotion.modalEnter(),
-                exit = BubbleMotion.modalExit()
+            CapsuleModalOverlay(
+                visible = chatUiState.target != null
             ) {
                 TelegramChatScreen(
                     state = chatUiState,

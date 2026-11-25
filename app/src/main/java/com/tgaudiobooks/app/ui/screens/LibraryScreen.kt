@@ -1,6 +1,7 @@
 package com.tgaudiobooks.app.ui.screens
 
 import androidx.compose.animation.AnimatedContent
+import com.tgaudiobooks.app.ui.components.BubbleMotion
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -127,21 +128,7 @@ fun LibraryScreen(
 
     AnimatedContent(
         targetState = screenKey,
-        transitionSpec = {
-            val depthInitial = when {
-                initialState.startsWith("channel:") || initialState.startsWith("playlist:") -> 2
-                initialState.startsWith("section:") -> 1
-                else -> 0
-            }
-            val depthTarget = when {
-                targetState.startsWith("channel:") || targetState.startsWith("playlist:") -> 2
-                targetState.startsWith("section:") -> 1
-                else -> 0
-            }
-            val forward = depthTarget >= depthInitial
-            (slideInHorizontally(tween(220)) { if (forward) it / 4 else -it / 4 } + fadeIn(tween(180)))
-                .togetherWith(slideOutHorizontally(tween(200)) { if (forward) -it / 5 else it / 5 } + fadeOut(tween(150)))
-        },
+        transitionSpec = { BubbleMotion.bubbleContentTransform() },
         label = "library_nav"
     ) { state ->
         if (state.startsWith("channel:") && openedChannel != null) {

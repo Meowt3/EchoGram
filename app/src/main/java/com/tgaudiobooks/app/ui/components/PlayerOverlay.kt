@@ -1325,7 +1325,7 @@ fun FullScreenPlayerModal(
                                     }
                                     val favScale by animateFloatAsState(
                                         targetValue = if (isFavorite) 1.15f else 1.0f,
-                                        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium),
+                                        animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium),
                                         label = "fav_pop"
                                     )
                                     IconButton(onClick = onToggleFavorite) {

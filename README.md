@@ -34,10 +34,10 @@ Get the latest signed Release APK from [GitHub Releases](https://github.com/Meow
 
 | Architecture | Package | Best For |
 | --- | --- | --- |
-| **`arm64-v8a`** *(Recommended)* | [`EchoGram-v2.1.3-arm64-v8a-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.3-arm64-v8a-release.apk) | Modern 64-bit Android smartphones (smallest size) |
-| **`armeabi-v7a`** | [`EchoGram-v2.1.3-armeabi-v7a-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.3-armeabi-v7a-release.apk) | Older 32-bit Android phones & Android TV boxes |
-| **`x86_64`** | [`EchoGram-v2.1.3-x86_64-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.3-x86_64-release.apk) | Emulators, Chromebooks, WSA & x86_64 tablets |
-| **Universal** | [`EchoGram-v2.1.3-universal-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.3-universal-release.apk) | Any Android 8.0+ device (if unsure) |
+| **`arm64-v8a`** *(Recommended)* | [`EchoGram-v2.1.4-arm64-v8a-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.4-arm64-v8a-release.apk) | Modern 64-bit Android smartphones (smallest size) |
+| **`armeabi-v7a`** | [`EchoGram-v2.1.4-armeabi-v7a-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.4-armeabi-v7a-release.apk) | Older 32-bit Android phones & Android TV boxes |
+| **`x86_64`** | [`EchoGram-v2.1.4-x86_64-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.4-x86_64-release.apk) | Emulators, Chromebooks, WSA & x86_64 tablets |
+| **Universal** | [`EchoGram-v2.1.4-universal-release.apk`](https://github.com/Meowt3/EchoGram/releases/latest/download/EchoGram-v2.1.4-universal-release.apk) | Any Android 8.0+ device (if unsure) |
 
 ### Quick Start
 
