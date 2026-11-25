@@ -20,6 +20,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -628,10 +629,7 @@ fun MiniPlayerBar(
                 AnimatedContent(
                     targetState = track,
                     contentKey = { it.trackId },
-                    transitionSpec = {
-                        (scaleIn(initialScale = 0.88f, animationSpec = tween(200)) + fadeIn(tween(200)))
-                            .togetherWith(scaleOut(targetScale = 0.92f, animationSpec = tween(150)) + fadeOut(tween(150)))
-                    },
+                    transitionSpec = { BubbleMotion.bubbleContentTransform() },
                     label = "mini_cover_swap"
                 ) { activeTrack ->
                     CoverArtworkBox(
@@ -665,10 +663,7 @@ fun MiniPlayerBar(
                     } else {
                         AnimatedContent(
                             targetState = isPlaying,
-                            transitionSpec = {
-                                (scaleIn(initialScale = 0.72f, animationSpec = tween(160)) + fadeIn(tween(150)))
-                                    .togetherWith(scaleOut(targetScale = 0.72f, animationSpec = tween(130)) + fadeOut(tween(130)))
-                            },
+                            transitionSpec = { BubbleMotion.iconPopTransform() },
                             label = "mini_play_icon"
                         ) { playing ->
                             Icon(
@@ -915,6 +910,11 @@ fun FullScreenPlayerModal(
                 .fillMaxSize()
                 .background(bgBrush)
         ) {
+            AmbientBubbleLayer(
+                modifier = Modifier.fillMaxSize(),
+                active = isPlaying,
+                intensity = 0.55f
+            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -1369,22 +1369,26 @@ fun FullScreenPlayerModal(
                                             tint = if (isShuffle) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
+                                    val prevInteraction = remember { MutableInteractionSource() }
                                     FilledTonalIconButton(
                                         onClick = onPrevious,
+                                        interactionSource = prevInteraction,
                                         shape = CircleShape,
-                                        modifier = Modifier.size(64.dp)
+                                        modifier = Modifier.size(64.dp).bubblePressEffect(prevInteraction, 0.88f)
                                     ) {
                                         Icon(Icons.Default.SkipPrevious, contentDescription = "Предыдущий", modifier = Modifier.size(30.dp))
                                     }
                                     val playBtnCorner by animateDpAsState(
                                         targetValue = if (isPlaying) 26.dp else 42.dp,
-                                        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
+                                        animationSpec = BubbleMotion.bouncySpring(),
                                         label = "play_shape_morph"
                                     )
+                                    val playInteraction = remember { MutableInteractionSource() }
                                     FilledIconButton(
                                         onClick = onTogglePlayPause,
+                                        interactionSource = playInteraction,
                                         shape = RoundedCornerShape(playBtnCorner),
-                                        modifier = Modifier.size(84.dp)
+                                        modifier = Modifier.size(84.dp).bubblePressEffect(playInteraction, 0.90f)
                                     ) {
                                         if (isBuffering) {
                                             CircularProgressIndicator(
@@ -1395,10 +1399,7 @@ fun FullScreenPlayerModal(
                                         } else {
                                             AnimatedContent(
                                                 targetState = isPlaying,
-                                                transitionSpec = {
-                                                    (scaleIn(initialScale = 0.65f, animationSpec = tween(170)) + fadeIn(tween(150)))
-                                                        .togetherWith(scaleOut(targetScale = 0.65f, animationSpec = tween(130)) + fadeOut(tween(130)))
-                                                },
+                                                transitionSpec = { BubbleMotion.iconPopTransform() },
                                                 label = "full_play_icon"
                                             ) { playing ->
                                                 Icon(
@@ -1409,10 +1410,12 @@ fun FullScreenPlayerModal(
                                             }
                                         }
                                     }
+                                    val nextInteraction = remember { MutableInteractionSource() }
                                     FilledTonalIconButton(
                                         onClick = onNext,
+                                        interactionSource = nextInteraction,
                                         shape = CircleShape,
-                                        modifier = Modifier.size(64.dp)
+                                        modifier = Modifier.size(64.dp).bubblePressEffect(nextInteraction, 0.88f)
                                     ) {
                                         Icon(Icons.Default.SkipNext, contentDescription = "Следующий", modifier = Modifier.size(30.dp))
                                     }

@@ -56,7 +56,7 @@ jobs:
       - name: Package Multi-ABI APKs
         run: |
           mkdir -p dist
-          VERSION="v2.1.1"
+          VERSION="v2.1.2"
           for abi in arm64-v8a armeabi-v7a x86_64 universal; do
             SRC="app/build/outputs/apk/release/app-${abi}-release.apk"
             if [ -f "$SRC" ]; then

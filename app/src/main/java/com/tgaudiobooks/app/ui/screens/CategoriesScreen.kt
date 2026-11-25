@@ -1,6 +1,7 @@
 package com.tgaudiobooks.app.ui.screens
 
 import androidx.compose.animation.AnimatedContent
+import com.tgaudiobooks.app.ui.components.BubbleMotion
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -151,7 +152,7 @@ fun CategoriesScreen(
 
     AnimatedContent(
         targetState = openedCategoryId != null,
-        transitionSpec = { fadeIn(tween(180)).togetherWith(fadeOut(tween(150))) },
+        transitionSpec = { BubbleMotion.bubbleContentTransform() },
         label = "categories_nav"
     ) { isDetailOpen ->
         val visibleCategory = openedCategory ?: lastOpenedCategory

@@ -17,6 +17,10 @@ import com.tgaudiobooks.app.data.telegram.TelegramRepository
 import com.tgaudiobooks.app.ui.screens.TelegramAuthScreen
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.ui.graphics.graphicsLayer
+import com.tgaudiobooks.app.ui.components.AmbientBubbleLayer
+import com.tgaudiobooks.app.ui.components.BubbleMotion
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -348,6 +352,11 @@ fun EchoGramApp(
             return@EchoGramTheme
         }
         Box(modifier = Modifier.fillMaxSize()) {
+            AmbientBubbleLayer(
+                modifier = Modifier.fillMaxSize(),
+                active = !isFullPlayerOpen && !showSettings,
+                intensity = 0.28f
+            )
             Scaffold(
                 snackbarHost = {
                     SnackbarHost(hostState = snackbarHostState) { data ->
@@ -390,19 +399,25 @@ fun EchoGramApp(
                 bottomBar = {
                     Column {
                         val isPlayingMainUi = isPlaying && !isFullPlayerOpen && !showSettings
-                        currentTrack?.let { active ->
-                            MiniPlayerBar(
-                                track = active,
-                                isPlaying = isPlayingMainUi,
-                                isBuffering = isBufferingTrack,
-                                positionMsFlow = viewModel.positionMs,
-                                durationMsFlow = viewModel.durationMs,
-                                progressBarStyle = progressBarStyle,
-                                onExpand = { isFullPlayerOpen = true },
-                                onTogglePlayPause = { viewModel.togglePlayPause() },
-                                onNext = { viewModel.playNext() },
-                                onPrevious = { viewModel.playPrevious() }
-                            )
+                        AnimatedVisibility(
+                            visible = currentTrack != null,
+                            enter = BubbleMotion.miniBarEnter(),
+                            exit = BubbleMotion.miniBarExit()
+                        ) {
+                            currentTrack?.let { active ->
+                                MiniPlayerBar(
+                                    track = active,
+                                    isPlaying = isPlayingMainUi,
+                                    isBuffering = isBufferingTrack,
+                                    positionMsFlow = viewModel.positionMs,
+                                    durationMsFlow = viewModel.durationMs,
+                                    progressBarStyle = progressBarStyle,
+                                    onExpand = { isFullPlayerOpen = true },
+                                    onTogglePlayPause = { viewModel.togglePlayPause() },
+                                    onNext = { viewModel.playNext() },
+                                    onPrevious = { viewModel.playPrevious() }
+                                )
+                            }
                         }
                         androidx.compose.material3.HorizontalDivider(
                             thickness = 0.5.dp,
@@ -434,6 +449,11 @@ fun EchoGramApp(
                                         }
                                     },
                                     icon = {
+                                        val navScale by animateFloatAsState(
+                                            targetValue = if (pagerState.currentPage == index) 1.16f else 1.0f,
+                                            animationSpec = BubbleMotion.bouncySpring(),
+                                            label = "nav_bubble_scale"
+                                        )
                                         Icon(
                                             when (tab) {
                                                 AppTab.HOME -> Icons.Default.Home
@@ -441,7 +461,11 @@ fun EchoGramApp(
                                                 AppTab.SEARCH -> Icons.Default.Search
                                                 AppTab.LIBRARY -> Icons.Default.LibraryMusic
                                             },
-                                            contentDescription = tab.title
+                                            contentDescription = tab.title,
+                                            modifier = Modifier.graphicsLayer {
+                                                scaleX = navScale
+                                                scaleY = navScale
+                                            }
                                         )
                                     },
                                     label = {
@@ -601,8 +625,8 @@ fun EchoGramApp(
 
             AnimatedVisibility(
                 visible = isFullPlayerOpen && currentTrack != null,
-                enter = slideInVertically(tween(260)) { it / 2 } + fadeIn(tween(200)),
-                exit = slideOutVertically(tween(220)) { it / 2 } + fadeOut(tween(180))
+                enter = BubbleMotion.modalEnter(),
+                exit = BubbleMotion.modalExit()
             ) {
                 currentTrack?.let { activeTrack ->
                     FullScreenPlayerModal(
@@ -679,8 +703,8 @@ fun EchoGramApp(
 
             AnimatedVisibility(
                 visible = chatUiState.target != null,
-                enter = slideInVertically(tween(240)) { it / 3 } + fadeIn(tween(180)),
-                exit = slideOutVertically(tween(200)) { it / 3 } + fadeOut(tween(150))
+                enter = BubbleMotion.modalEnter(),
+                exit = BubbleMotion.modalExit()
             ) {
                 TelegramChatScreen(
                     state = chatUiState,

@@ -1,6 +1,7 @@
 package com.tgaudiobooks.app.ui.screens
 
 import androidx.compose.animation.AnimatedContent
+import com.tgaudiobooks.app.ui.components.BubbleMotion
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -263,10 +264,7 @@ fun HomeScreen(
 
     AnimatedContent(
         targetState = screenMode,
-        transitionSpec = {
-            (slideInVertically(tween(240)) { it / 16 } + fadeIn(tween(200)))
-                .togetherWith(slideOutVertically(tween(180)) { -it / 16 } + fadeOut(tween(160)))
-        },
+        transitionSpec = { BubbleMotion.bubbleContentTransform() },
         label = "home_screen_mode"
     ) { mode ->
         when {

@@ -1,6 +1,7 @@
 package com.tgaudiobooks.app.ui.screens
 
 import androidx.compose.animation.AnimatedContent
+import com.tgaudiobooks.app.ui.components.BubbleMotion
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -190,7 +191,7 @@ fun SearchScreen(
 
         AnimatedContent(
             targetState = searchViewKey,
-            transitionSpec = { fadeIn(tween(180)).togetherWith(fadeOut(tween(140))) },
+            transitionSpec = { BubbleMotion.bubbleContentTransform() },
             modifier = Modifier.weight(1f),
             label = "search_state"
         ) { stateKey ->

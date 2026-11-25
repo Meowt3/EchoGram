@@ -103,7 +103,10 @@ import com.tgaudiobooks.app.data.model.TelegramProxyItem
 import com.tgaudiobooks.app.data.model.TelegramProxyType
 import com.tgaudiobooks.app.data.model.ThemeMode
 import com.tgaudiobooks.app.data.telegram.TelegramDefaults
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.ui.graphics.graphicsLayer
 import com.tgaudiobooks.app.ui.components.AnimatedProgressBarCanvas
+import com.tgaudiobooks.app.ui.components.BubbleMotion
 import com.tgaudiobooks.app.ui.theme.AppIconPreset
 import com.tgaudiobooks.app.ui.theme.EchoGramBrandIcon
 import java.text.SimpleDateFormat
@@ -306,12 +309,18 @@ fun SettingsScreen(
                             animationSpec = tween(180),
                             label = "settings_tab_fg"
                         )
+                        val tabScale by animateFloatAsState(
+                            targetValue = if (active) 1.04f else 0.98f,
+                            animationSpec = BubbleMotion.bouncySpring(),
+                            label = "settings_tab_scale"
+                        )
                         Surface(
                             shape = RoundedCornerShape(14.dp),
                             color = bg,
                             contentColor = fg,
                             modifier = Modifier
                                 .weight(1f)
+                                .graphicsLayer { scaleX = tabScale; scaleY = tabScale }
                                 .clip(RoundedCornerShape(14.dp))
                                 .clickable { activeTab = tab }
                         ) {
@@ -337,9 +346,7 @@ fun SettingsScreen(
 
         AnimatedContent(
             targetState = activeTab,
-            transitionSpec = {
-                fadeIn(tween(180)).togetherWith(fadeOut(tween(140)))
-            },
+            transitionSpec = { BubbleMotion.bubbleContentTransform() },
             modifier = Modifier.weight(1f),
             label = "settings_tab_content"
         ) { tab ->

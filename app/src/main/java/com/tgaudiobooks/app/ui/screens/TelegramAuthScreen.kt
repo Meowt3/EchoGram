@@ -67,6 +67,8 @@ import com.tgaudiobooks.app.data.model.TelegramAuthState
 import com.tgaudiobooks.app.data.model.TelegramConnectionStatus
 import com.tgaudiobooks.app.data.model.TelegramProxyItem
 import com.tgaudiobooks.app.data.model.TelegramProxyType
+import com.tgaudiobooks.app.ui.components.AmbientBubbleLayer
+import com.tgaudiobooks.app.ui.components.BubbleMotion
 import com.tgaudiobooks.app.ui.components.QrCodeGenerator
 import com.tgaudiobooks.app.ui.theme.AppIconPreset
 import com.tgaudiobooks.app.ui.theme.EchoGramBrandIcon
@@ -118,7 +120,13 @@ fun TelegramAuthScreen(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(
+        Box(modifier = Modifier.fillMaxSize()) {
+            AmbientBubbleLayer(
+                modifier = Modifier.fillMaxSize(),
+                active = true,
+                intensity = 0.45f
+            )
+            Column(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
@@ -212,7 +220,11 @@ fun TelegramAuthScreen(
                     }
                 }
 
-                AnimatedContent(targetState = authState, label = "tg_auth_step") { state ->
+                AnimatedContent(
+                    targetState = authState,
+                    transitionSpec = { BubbleMotion.bubbleContentTransform() },
+                    label = "tg_auth_step"
+                ) { state ->
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -501,6 +513,7 @@ fun TelegramAuthScreen(
                     }
                 }
             }
+        }
         }
     }
 
